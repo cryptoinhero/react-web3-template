@@ -69,6 +69,55 @@ export const registerToken = async (
   return tokenAdded
 }
 
+export const addChain = async (chainId) => {
+  const { ethereum } = window
+  if (typeof ethereum === 'undefined') return false
+
+  try {
+    await ethereum.request({
+      method: 'wallet_addEthereumChain',
+      params: [
+        {
+          chainId: `0x${chainId.toString(16)}`,
+          chainName: 'Binance Smart Chain Mainnet',
+          nativeCurrency: {
+            name: 'BNB',
+            symbol: 'bnb',
+            decimals: 18,
+          },
+          rpcUrls: nodes,
+          blockExplorerUrls: [ExplorerUrls[chainId]],
+        },
+      ],
+    })
+    return true
+  } catch (error) {
+    console.error(`Error adding chain ${chainId}: ${error.message}`)
+  }
+  return false
+}
+
+export const switchChain = async (chainId) => {
+  const { ethereum } = window
+  if (typeof ethereum === 'undefined') return false
+
+  try {
+    await ethereum.request({
+      method: 'wallet_switchEthereumChain',
+      params: [{ chainId }],
+    })
+    return true
+  } catch (error) {
+    // const ERROR_CODE_UNKNOWN_CHAIN = 4902
+    const ERROR_CODE_USER_REJECTED = 4001
+    if (error.code !== ERROR_CODE_USER_REJECTED) {
+      const res = await addChain(chainId)
+      return res
+    }
+  }
+  return false
+}
+
 // Check if the metamask is installed
 export const _isMetaMaskInstalled = () => {
   //Have to check the ethereum binding on the window object to see if it's installed

@@ -4,7 +4,7 @@ import { injected } from '../utils/web3React'
 import useAuth from './useAuth'
 
 export const NetworkContextName = 'NftologyNFTNetwork'
-export const connectorLocalStorageKey = "NftologyNFTConnectorId";
+export const connectorLocalStorageKey = "Big-G-Lottery";
 
 export function useActiveWeb3React() {
   const context = useWeb3ReactCore()
@@ -26,11 +26,10 @@ const _binanceChainListener = async () =>
   )
 
 export function useEagerConnect() {
-  const [tried, setTried] = useState(false)
   const { login } = useAuth()
 
   useEffect(() => {
-    const connectorId = window.localStorage.getItem(connectorLocalStorageKey)
+    const connectorId = window.localStorage.getItem(connectorLocalStorageKey) || "Injected"
 
     if (connectorId) {
       const isConnectorBinanceChain = connectorId === 'BinanceChainWallet'
@@ -39,20 +38,14 @@ export function useEagerConnect() {
       // Currently BSC extension doesn't always inject in time.
       // We must check to see if it exists, and if not, wait for it before proceeding.
       if (isConnectorBinanceChain && !isBinanceChainDefined) {
-        _binanceChainListener().then(() => {
-          login(connectorId)
-          setTried(true)
-        })
+        _binanceChainListener().then(() => login(connectorId))
 
         return
       }
 
       login(connectorId)
-      setTried(true)
     }
-  }, [login])
-    
-  return tried
+  }, [login])    
 }
 
 /**

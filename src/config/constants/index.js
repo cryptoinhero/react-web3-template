@@ -1,8 +1,5 @@
 export const zeroAddress = '0x0000000000000000000000000000000000000000'
 
-export const NFTStorageKey =
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkaWQ6ZXRocjoweDEyNWJDRUM3QmZBYjY0MTI1MDI4N2Q3ZEE2NzFhOTE0RWRhQ2M5RTMiLCJpc3MiOiJuZnQtc3RvcmFnZSIsImlhdCI6MTYyNjYxNjIxMDAwNiwibmFtZSI6IlN0cml0ZSBORlQifQ.SdCF_t-iGAMopMlhAveBoxXe9XUnIwcH6cmpC7Mr-xk';
-
 export const DefaultChainID = parseInt(process.env.REACT_APP_NETWORK_ID, 10)
 
 export const ChainList = {
@@ -16,13 +13,6 @@ export const ExplorerUrls = {
   97: 'https://testnet.bscscan.com/',
   4: 'https://rinkeby.etherscan.io/',
 }
-
-export const GRAPHQL_URL = process.env.REACT_APP_SUBGRAPH_URL
-export const BASETOKEN_URI = 'http://localhost:5000/token'
-
-export const DefaultAvatar =
-  'https://ipfs.io/ipfs/QmRRXBjQRQBdnivJuGe9bgk4yqogULSYoLmcy32y6AierY';
-
 
 export const Currencies = {
   56: [
