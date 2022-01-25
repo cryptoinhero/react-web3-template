@@ -1,5 +1,6 @@
 import { useCallback } from 'react'
 import { useWeb3React, UnsupportedChainIdError } from '@web3-react/core'
+import { NoBscProviderError } from '@binance-chain/bsc-connector'
 import {
   NoEthereumProviderError,
   UserRejectedRequestError as UserRejectedRequestErrorInjected,
@@ -12,6 +13,7 @@ import {
 import { connectorLocalStorageKey } from '.'
 import { connectorsByName } from '../utils/web3React'
 import { setupNetwork } from '../utils/wallet'
+import { toast } from 'react-toastify'
 
 const useAuth = () => {
   const { activate, deactivate } = useWeb3React()
@@ -21,29 +23,27 @@ const useAuth = () => {
     const connector = connectorsByName[connectorID]
     if (connector) {
       activate(connector, async (error) => {
-        window.localStorage.removeItem(connectorLocalStorageKey)
         if (error instanceof UnsupportedChainIdError) {
-          console.log({ text: 'Unsupported Chain Id Error. Check your chain Id!', type: 'error' })
           const hasSetup = await setupNetwork()
           if (hasSetup) {
             activate(connector)
           }
-        } else if (error instanceof NoEthereumProviderError ) {
-          console.log({ text: 'No provider was found!', type: 'error' })
-        } else if (
-          error instanceof UserRejectedRequestErrorInjected ||
-          error instanceof UserRejectedRequestErrorWalletConnect
-        ) {
-          if (connector instanceof WalletConnectConnector) {
-            const walletConnector = connector
-            walletConnector.walletConnectProvider = null
-          }
-          console.log({ text: 'Authorization Error, Please authorize to access your account', type: 'error' })
-          console.log('Authorization Error, Please authorize to access your account')
         } else {
-          
-          console.log({ text: error.message, type: 'error' })
-          console.log(error.name, error.message)
+          window.localStorage.removeItem(connectorLocalStorageKey)
+          if (error instanceof NoEthereumProviderError || error instanceof NoBscProviderError) {
+            toast.error('No provider was found')
+          } else if (
+            error instanceof UserRejectedRequestErrorInjected ||
+            error instanceof UserRejectedRequestErrorWalletConnect
+          ) {
+            if (connector instanceof WalletConnectConnector) {
+              const walletConnector = connector
+              walletConnector.walletConnectProvider = null
+            }
+            toast.error('Please authorize to access your account')
+          } else {
+            toast.error(error.message)
+          }
         }
       })
     } else {
@@ -59,6 +59,7 @@ const useAuth = () => {
       connectorsByName.WalletConnect.close()
       connectorsByName.WalletConnect.walletConnectProvider = null
     }
+    window.localStorage.removeItem(connectorLocalStorageKey)
   }, [deactivate])
 
   return { login, logout }

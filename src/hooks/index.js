@@ -29,7 +29,7 @@ export function useEagerConnect() {
   const { login } = useAuth()
 
   useEffect(() => {
-    const connectorId = window.localStorage.getItem(connectorLocalStorageKey) || "Injected"
+    const connectorId = window.localStorage.getItem(connectorLocalStorageKey)
 
     if (connectorId) {
       const isConnectorBinanceChain = connectorId === 'BinanceChainWallet'

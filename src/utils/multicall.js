@@ -1,5 +1,5 @@
 import { ethers } from 'ethers'
-import { getMulticallContract } from './contracts'
+import { getMulticallContract } from './contractHelpers'
 
 const multicall = async (abi , calls) => {
   try {
